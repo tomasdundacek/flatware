@@ -3,6 +3,7 @@
 require 'flatware/cli'
 require 'flatware/rspec'
 require 'flatware/rspec/formatters/console'
+require 'flatware/rspec/formatters/fuubar'
 
 module Flatware
   # rspec thor command
@@ -17,7 +18,8 @@ module Flatware
     def rspec(*rspec_args)
       jobs = RSpec.extract_jobs_from_args rspec_args, workers: workers
 
-      formatter = Flatware::RSpec::Formatters::Console.new(
+      formatter_klass = "Flatware::RSpec::Formatters::#{options[:formatter].capitalize}".constantize
+      formatter = formatter_klass.new(
         ::RSpec.configuration.output_stream,
         deprecation_stream: ::RSpec.configuration.deprecation_stream
       )
